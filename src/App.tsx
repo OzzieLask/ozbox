@@ -3,12 +3,18 @@ import { Glass } from "./glass/Glass";
 import { Orb } from "./orb/Orb";
 import { Dock, DOCK_ITEM_SIZE, DOCK_PADDING } from "./dock/Dock";
 import { findWidget, WIDGETS } from "./widgets/registry";
-import { placeOrbWindow } from "./window/position";
+import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
+import { placeOrbWindow, resetOrbPosition } from "./window/position";
 import { type Anchor, morphTo, TILE_SIZE } from "./window/morph";
 import "./App.css";
 
 /** How long content takes to fade out before the window shrinks around it. */
 const FADE_OUT_MS = 120;
+/** Fade-out plus the morph animation (morph.rs DURATION), with a little slack. */
+const COLLAPSE_MS = FADE_OUT_MS + 300;
+/** Sent by the tray's "Reset position" item (tray.rs). */
+const RESET_POSITION_EVENT = "ozbox://reset-position";
 
 const DOCK_WIDTH = TILE_SIZE + DOCK_PADDING + WIDGETS.length * DOCK_ITEM_SIZE;
 
@@ -51,6 +57,15 @@ export default function App() {
         if (next.kind === "tile") setDockVisible(false);
         if (leavingPanel || next.kind === "tile") await wait(FADE_OUT_MS);
 
+        // Panels take keyboard focus; the tile and dock never do (focus.rs), and
+        // closing a panel hands focus back to the app the user was in.
+        const wantsFocus = next.kind === "panel";
+        if (wantsFocus !== (view.kind === "panel")) {
+          invoke("set_focus_mode", { focus: wantsFocus }).catch((err) =>
+            console.error("set_focus_mode", err),
+          );
+        }
+
         setView(next);
         const { width, height } = sizeOf(next);
         setAnchor(await morphTo(width, height));
@@ -72,6 +87,24 @@ export default function App() {
   useEffect(() => {
     if (view.kind === "panel") findWidget(view.id)?.attention?.acknowledge();
   }, [view]);
+
+  // Tray "Reset position": collapse to the tile, then move it back to the default spot.
+  const goToRef = useRef(goTo);
+  goToRef.current = goTo;
+  const viewRef = useRef(view);
+  viewRef.current = view;
+  useEffect(() => {
+    const unlisten = listen(RESET_POSITION_EVENT, async () => {
+      if (viewRef.current.kind !== "tile") {
+        await goToRef.current({ kind: "tile" });
+        await wait(COLLAPSE_MS);
+      }
+      await resetOrbPosition();
+    });
+    return () => {
+      unlisten.then((off) => off());
+    };
+  }, []);
 
   const onOrbClick = () => {
     if (view.kind === "tile") goTo(alertingId ? { kind: "panel", id: alertingId } : { kind: "dock" });

@@ -43,6 +43,13 @@ async function defaultPosition(): Promise<Point> {
   };
 }
 
+/** Forget the saved spot and move the (collapsed) tile back to the default one. */
+export async function resetOrbPosition(): Promise<void> {
+  localStorage.removeItem(STORAGE_KEY);
+  const pos = await defaultPosition();
+  await getCurrentWindow().setPosition(new PhysicalPosition(pos.x, pos.y));
+}
+
 /** Move the orb to its saved (or default) spot, show it, and start remembering moves. */
 export async function placeOrbWindow(): Promise<() => void> {
   const win = getCurrentWindow();
