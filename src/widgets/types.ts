@@ -17,4 +17,13 @@ export type WidgetDefinition = {
   Panel: ComponentType;
   /** Optional live badge drawn over the dock icon, e.g. a running timer's time. */
   Glance?: ComponentType;
+  /**
+   * Optional way to ask for the user's attention (e.g. a finished timer). While
+   * `use()` is true the OZ tile pulses; clicking it opens this widget's panel, and
+   * opening the panel calls `acknowledge()`.
+   */
+  attention?: {
+    use: () => boolean;
+    acknowledge: () => void;
+  };
 };

@@ -9,10 +9,12 @@ export const DOCK_PADDING = 14;
 type DockProps = {
   widgets: WidgetDefinition[];
   selectedId: string | null;
+  /** Glances tick while shown; skip them while the dock is hidden. */
+  showGlances: boolean;
   onSelect: (id: string) => void;
 };
 
-export function Dock({ widgets, selectedId, onSelect }: DockProps) {
+export function Dock({ widgets, selectedId, showGlances, onSelect }: DockProps) {
   return (
     <div className="dock">
       <div className="dock__divider" aria-hidden />
@@ -26,7 +28,7 @@ export function Dock({ widgets, selectedId, onSelect }: DockProps) {
           onClick={() => onSelect(id)}
         >
           <Icon />
-          {Glance && (
+          {Glance && showGlances && (
             <span className="dock__glance">
               <Glance />
             </span>

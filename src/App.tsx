@@ -64,7 +64,19 @@ export default function App() {
     [view],
   );
 
-  const onOrbClick = () => goTo(view.kind === "tile" ? { kind: "dock" } : { kind: "tile" });
+  // Widgets asking for attention. The list is fixed, so the hooks run in a stable order.
+  const alerts = WIDGETS.map((w) => w.attention?.use() ?? false);
+  const alertingId = WIDGETS.find((_, i) => alerts[i])?.id;
+
+  // Opening a widget's panel is how the user acknowledges its alert.
+  useEffect(() => {
+    if (view.kind === "panel") findWidget(view.id)?.attention?.acknowledge();
+  }, [view]);
+
+  const onOrbClick = () => {
+    if (view.kind === "tile") goTo(alertingId ? { kind: "panel", id: alertingId } : { kind: "dock" });
+    else goTo({ kind: "tile" });
+  };
 
   const onSelectWidget = (id: string) =>
     goTo(view.kind === "panel" && view.id === id ? { kind: "dock" } : { kind: "panel", id });
@@ -97,11 +109,12 @@ export default function App() {
           grows, it uncovers more of the layout rather than reflowing it. */}
       <div className={shellClass} style={{ width: size.width, height: size.height }}>
         <div className="shell__header">
-          <Orb active={view.kind !== "tile"} onClick={onOrbClick} />
+          <Orb active={view.kind !== "tile"} alert={alertingId !== undefined} onClick={onOrbClick} />
           <div className={`shell__dock${dockVisible ? " is-visible" : ""}`}>
             <Dock
               widgets={WIDGETS}
               selectedId={panelWidget?.id ?? null}
+              showGlances={dockVisible}
               onSelect={onSelectWidget}
             />
           </div>

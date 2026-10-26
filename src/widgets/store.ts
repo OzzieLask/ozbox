@@ -28,6 +28,8 @@ type SetState<T> = (next: T | ((prev: T) => T)) => void;
 export type WidgetStore<T> = {
   get: () => T;
   set: SetState<T>;
+  /** Call `listener` after every change (including loading from disk). */
+  subscribe: (listener: () => void) => () => void;
   /** React hook: current state plus a setter, like useState but shared and saved. */
   use: () => [T, SetState<T>];
 };
@@ -82,6 +84,7 @@ export function createWidgetStore<T>(
   return {
     get: getSnapshot,
     set,
+    subscribe,
     use: () => [useSyncExternalStore(subscribe, getSnapshot), set],
   };
 }

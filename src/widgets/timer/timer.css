@@ -1,0 +1,188 @@
+.timer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  height: 100%;
+  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.timer button,
+.timer input {
+  font: inherit;
+  color: inherit;
+  outline: none;
+}
+
+.timer button {
+  cursor: pointer;
+}
+
+.timer button:disabled,
+.timer input:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+/* ---- Mode switch ---- */
+
+.timer__modes {
+  display: flex;
+  padding: 2px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.timer__mode {
+  position: relative;
+  flex: 1;
+  height: 24px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 12px;
+  opacity: 0.7;
+  transition: background-color 120ms ease, opacity 120ms ease;
+}
+
+.timer__mode.is-active {
+  background: rgba(255, 255, 255, 0.18);
+  opacity: 1;
+}
+
+/* The other mode is running in the background. */
+.timer__mode-dot {
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(150, 190, 255, 0.95);
+}
+
+/* ---- Display ---- */
+
+.timer__display {
+  text-align: center;
+  font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  font-size: 40px;
+  font-weight: 300;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.timer__display.is-paused {
+  opacity: 0.6;
+}
+
+.timer__display.is-done {
+  font-size: 30px;
+  line-height: 44px;
+  font-weight: 400;
+  color: rgba(175, 205, 255, 1);
+}
+
+.timer__progress {
+  height: 3px;
+  margin: -2px 4px 0;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.timer__progress-fill {
+  height: 100%;
+  background: rgba(150, 190, 255, 0.9);
+  transform-origin: left;
+  transition: transform 250ms linear;
+}
+
+/* ---- Duration ---- */
+
+.timer__presets {
+  display: flex;
+  gap: 4px;
+}
+
+.timer__chip,
+.timer__custom {
+  height: 24px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  transition: background-color 120ms ease;
+}
+
+.timer__chip {
+  flex: 1;
+  padding: 0;
+}
+
+.timer__chip:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.timer__chip.is-active,
+.timer__custom.is-active {
+  background: rgba(140, 180, 255, 0.35);
+}
+
+.timer__custom {
+  flex: 1.4;
+  min-width: 0;
+  padding: 0 6px;
+  text-align: center;
+}
+
+.timer__custom::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.timer__custom.is-active::placeholder {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.timer__custom.is-invalid {
+  box-shadow: inset 0 0 0 1px rgba(255, 110, 110, 0.8);
+}
+
+/* ---- Controls ---- */
+
+.timer__controls {
+  display: flex;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.timer__button {
+  flex: 1;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+
+.timer__button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.timer__button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.timer__button--primary {
+  flex: 1.6;
+  background: rgba(140, 180, 255, 0.4);
+  font-weight: 600;
+}
+
+.timer__button--primary:hover:not(:disabled) {
+  background: rgba(140, 180, 255, 0.55);
+}

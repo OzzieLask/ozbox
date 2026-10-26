@@ -6,6 +6,8 @@ const DRAG_THRESHOLD = 4; // px of movement before a press becomes a drag
 
 type OrbProps = {
   active: boolean;
+  /** A widget wants attention: pulse until clicked. */
+  alert: boolean;
   onClick: () => void;
 };
 
@@ -19,12 +21,12 @@ function send(cmd: string, args?: Record<string, unknown>) {
 }
 
 /** The OZ button: click to toggle the control center, press-and-move to drag the window. */
-export function Orb({ active, onClick }: OrbProps) {
+export function Orb({ active, alert, onClick }: OrbProps) {
   const press = useRef<Press | null>(null);
 
   return (
     <button
-      className={`orb${active ? " orb--active" : ""}`}
+      className={`orb${active ? " orb--active" : ""}${alert ? " orb--alert" : ""}`}
       aria-label="OzBox"
       aria-expanded={active}
       onPointerDown={(e) => {

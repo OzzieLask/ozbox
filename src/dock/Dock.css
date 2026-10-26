@@ -50,21 +50,22 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* A widget's Glance sits over the top corner of its icon. */
+/* A widget's Glance is laid over its icon; each glance style positions itself. */
 .dock__glance {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  inset: 0;
   pointer-events: none;
 }
 
 .glance-count {
+  position: absolute;
+  top: 1px;
+  right: -1px;
   display: block;
   min-width: 14px;
   height: 14px;
   padding: 0 3px;
   box-sizing: border-box;
-  margin: -4px -6px 0 0;
   border-radius: 7px;
   background: rgba(120, 170, 255, 0.95);
   color: #fff;
@@ -74,10 +75,43 @@
 }
 
 .glance-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
   display: block;
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: rgba(150, 190, 255, 0.95);
   box-shadow: 0 0 6px rgba(150, 190, 255, 0.8);
+}
+
+/* A short time readout across the bottom of the icon, e.g. a running timer. */
+.glance-time {
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 4px;
+  border-radius: 5px;
+  background: rgba(20, 28, 48, 0.75);
+  color: #fff;
+  font: 600 9.5px/13px "Segoe UI", system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.glance-time.is-paused {
+  opacity: 0.6;
+}
+
+.glance-time.is-alert {
+  background: rgba(120, 170, 255, 0.95);
+  animation: glance-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes glance-pulse {
+  50% {
+    opacity: 0.55;
+  }
 }

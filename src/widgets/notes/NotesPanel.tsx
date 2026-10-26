@@ -1,4 +1,4 @@
-import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
+import { EditorContent, Extension, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { Placeholder } from "@tiptap/extensions";
@@ -7,7 +7,23 @@ import { ChecklistIcon } from "../../ui/icons";
 import { notesStore, updateTab } from "./model";
 import { TabBar } from "./TabBar";
 
+/** Tab / Shift+Tab nest and un-nest list items; outside a list, Tab stays in the editor. */
+const ListIndent = Extension.create({
+  name: "listIndent",
+  priority: 1000, // run before the default handlers
+  addKeyboardShortcuts() {
+    // Read `commands` per keypress: it's bound to the editor state at access time.
+    return {
+      Tab: ({ editor }) =>
+        editor.commands.sinkListItem("taskItem") || editor.commands.sinkListItem("listItem") || true,
+      "Shift-Tab": ({ editor }) =>
+        editor.commands.liftListItem("taskItem") || editor.commands.liftListItem("listItem") || true,
+    };
+  },
+});
+
 const extensions = [
+  ListIndent,
   StarterKit.configure({
     heading: { levels: [1, 2] },
     // Kept light on purpose: OzBox is for quick capture, not documents.
