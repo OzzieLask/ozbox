@@ -27,6 +27,15 @@ export function NotesIcon() {
   );
 }
 
+export function ChecklistIcon() {
+  return (
+    <Icon width="18" height="18">
+      <rect x="3.5" y="4.5" width="5" height="5" rx="1.2" />
+      <path d="M4.8 15.5l1.4 1.4 2.6-2.8M12 7h8.5M12 15.5h8.5" />
+    </Icon>
+  );
+}
+
 export function TimerIcon() {
   return (
     <Icon>

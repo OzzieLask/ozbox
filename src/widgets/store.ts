@@ -39,8 +39,15 @@ const isPlainObject = (v: unknown): v is Record<string, unknown> =>
  * State for one widget that lives outside any component, so its Panel and Glance
  * share it and it survives the panel closing. Changes save to disk automatically.
  * Create stores at module level (not inside components).
+ *
+ * `migrate` turns whatever was saved (possibly an older shape) into the current
+ * one; without it, saved objects are merged over `initial` to fill in new fields.
  */
-export function createWidgetStore<T>(key: string, initial: T): WidgetStore<T> {
+export function createWidgetStore<T>(
+  key: string,
+  initial: T,
+  migrate?: (saved: unknown) => T,
+): WidgetStore<T> {
   let state = initial;
   let saveTimer: number | undefined;
   const listeners = new Set<() => void>();
@@ -49,8 +56,9 @@ export function createWidgetStore<T>(key: string, initial: T): WidgetStore<T> {
   hydrators.push(async (file) => {
     const saved = await file.get<T>(key);
     if (saved === undefined) return;
+    if (migrate) state = migrate(saved);
     // Fill in fields added since the state was saved.
-    state = isPlainObject(initial) && isPlainObject(saved) ? { ...initial, ...saved } : saved;
+    else state = isPlainObject(initial) && isPlainObject(saved) ? { ...initial, ...saved } : saved;
     notify();
   });
 

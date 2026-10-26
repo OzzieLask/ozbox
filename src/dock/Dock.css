@@ -58,6 +58,21 @@
   pointer-events: none;
 }
 
+.glance-count {
+  display: block;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  box-sizing: border-box;
+  margin: -4px -6px 0 0;
+  border-radius: 7px;
+  background: rgba(120, 170, 255, 0.95);
+  color: #fff;
+  font: 600 9.5px/14px "Segoe UI", system-ui, sans-serif;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
 .glance-dot {
   display: block;
   width: 6px;

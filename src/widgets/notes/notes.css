@@ -1,22 +1,267 @@
-.notes-scratch {
-  box-sizing: border-box;
-  width: 100%;
+.notes {
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  padding: 10px 12px;
+  gap: 6px;
+  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* ---- Tab bar + tools ---- */
+
+.notes__bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+}
+
+.note-tabs {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.note-tab {
+  flex: 0 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  border-radius: 6px;
+  transition: background-color 120ms ease;
+}
+
+.note-tab:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.note-tab--active,
+.note-tab--active:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.note-tab__title,
+.note-tab__close,
+.note-tabs__add,
+.notes__tool {
   border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+.note-tab__title {
+  min-width: 0;
+  padding: 0 8px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.7;
+}
+
+.note-tab--active .note-tab__title {
+  opacity: 1;
+}
+
+.note-tab__close {
+  flex: none;
+  padding: 0 6px 0 0;
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0.55;
+}
+
+.note-tab__close:hover {
+  opacity: 1;
+}
+
+.note-tab__close.is-confirming {
+  padding: 2px 6px;
+  margin-right: 2px;
+  border-radius: 4px;
+  background: rgba(255, 90, 90, 0.75);
+  font-size: 11px;
+  opacity: 1;
+}
+
+.note-tab__rename {
+  width: 90px;
+  height: 22px;
+  padding: 0 6px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 6px;
   outline: none;
-  resize: none;
+  background: rgba(0, 0, 0, 0.2);
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+}
+
+.note-tabs__add {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.note-tabs__add:hover,
+.notes__tool:hover {
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 1;
+}
+
+.notes__tool {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 6px;
+  opacity: 0.75;
+}
+
+.notes__tool.is-active {
+  background: rgba(255, 255, 255, 0.18);
+  opacity: 1;
+}
+
+/* ---- Editor ---- */
+
+.notes__editor {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  border-radius: 6px;
   background: rgba(0, 0, 0, 0.12);
-  color: rgba(255, 255, 255, 0.92);
-  font: 14px/1.45 "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+}
+
+.notes__editor .ProseMirror {
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  outline: none;
+  font-size: 14px;
+  line-height: 1.45;
   caret-color: rgba(170, 200, 255, 0.95);
 }
 
-.notes-scratch::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+.notes__editor .ProseMirror > :first-child {
+  margin-top: 0;
 }
 
-.notes-scratch::selection {
+.notes__editor p {
+  margin: 0;
+}
+
+.notes__editor h1,
+.notes__editor h2 {
+  margin: 8px 0 4px;
+  line-height: 1.25;
+  font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+}
+
+.notes__editor h1 {
+  font-size: 19px;
+  font-weight: 650;
+}
+
+.notes__editor h2 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.notes__editor ul,
+.notes__editor ol {
+  margin: 2px 0;
+  padding-left: 22px;
+}
+
+.notes__editor a {
+  color: rgba(150, 195, 255, 1);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: text;
+}
+
+.notes__editor ::selection {
   background: rgba(140, 180, 255, 0.4);
+}
+
+/* Placeholder on an empty note. */
+.notes__editor p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+
+/* ---- Checklists ---- */
+
+.notes__editor ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 2px;
+}
+
+.notes__editor ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.notes__editor ul[data-type="taskList"] li > label {
+  flex: none;
+  margin-top: 2px;
+  user-select: none;
+}
+
+.notes__editor ul[data-type="taskList"] li > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.notes__editor ul[data-type="taskList"] li[data-checked="true"] > div {
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: line-through;
+}
+
+.notes__editor input[type="checkbox"] {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.notes__editor input[type="checkbox"]:checked {
+  border-color: rgba(140, 185, 255, 0.95);
+  background: rgba(140, 185, 255, 0.85);
+}
+
+.notes__editor input[type="checkbox"]:checked::after {
+  content: "";
+  width: 4px;
+  height: 8px;
+  margin-top: -2px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
