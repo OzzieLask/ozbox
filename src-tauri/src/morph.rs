@@ -2,9 +2,9 @@
 //! grows away from the nearest screen edges, keeping the corner where the tile sits
 //! fixed, and animates position + size together on its own frame-paced thread.
 
+use serde::Serialize;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::time::Instant;
-use serde::Serialize;
 use tauri::WebviewWindow;
 
 use crate::pacing::wait_frame;
@@ -70,8 +70,16 @@ pub fn morph(window: WebviewWindow, width: f64, height: f64) -> Result<Anchor, S
 
     let (w, h) = ((width * scale).round(), (height * scale).round());
     let to = Rect {
-        x: if anchor.right { from.x + from.w - w } else { from.x },
-        y: if anchor.bottom { from.y + from.h - h } else { from.y },
+        x: if anchor.right {
+            from.x + from.w - w
+        } else {
+            from.x
+        },
+        y: if anchor.bottom {
+            from.y + from.h - h
+        } else {
+            from.y
+        },
         w,
         h,
     };
@@ -112,7 +120,7 @@ fn animate(window: WebviewWindow, from: Rect, to: Rect, id: u64) {
 fn set_rect(window: &WebviewWindow, r: Rect) {
     use windows::Win32::Foundation::HWND;
     use windows::Win32::UI::WindowsAndMessaging::{
-        SetWindowPos, SWP_NOACTIVATE, SWP_NOOWNERZORDER, SWP_NOZORDER,
+        SWP_NOACTIVATE, SWP_NOOWNERZORDER, SWP_NOZORDER, SetWindowPos,
     };
 
     let Ok(hwnd) = window.hwnd() else { return };
@@ -137,5 +145,8 @@ fn set_rect(window: &WebviewWindow, r: Rect) {
     use tauri::{PhysicalPosition, PhysicalSize};
 
     let _ = window.set_size(PhysicalSize::new(r.w.round() as u32, r.h.round() as u32));
-    let _ = window.set_position(PhysicalPosition::new(r.x.round() as i32, r.y.round() as i32));
+    let _ = window.set_position(PhysicalPosition::new(
+        r.x.round() as i32,
+        r.y.round() as i32,
+    ));
 }

@@ -2,20 +2,35 @@
   --tile-size: 56px;
 }
 
-/* Pinned to the tile's corner of the window; mirrored when anchored right so the
-   OZ button stays where the tile was and the strip extends away from the edge. */
+/* Pinned to the tile's corner of the window and mirrored to match, so the OZ
+   button stays where the tile was and everything else extends away from the edge. */
 .shell {
   position: absolute;
   top: 0;
   left: 0;
-  height: var(--tile-size);
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .shell--right {
   left: auto;
   right: 0;
+}
+
+.shell--bottom {
+  top: auto;
+  bottom: 0;
+  flex-direction: column-reverse;
+}
+
+.shell__header {
+  flex: none;
+  height: var(--tile-size);
+  display: flex;
+  flex-direction: row;
+}
+
+.shell--right .shell__header {
   flex-direction: row-reverse;
 }
 
@@ -23,19 +38,40 @@
   padding-inline: 8px 2px;
 }
 
-.shell--bottom {
-  top: auto;
-  bottom: 0;
-}
-
-.shell__items {
+.shell__dock {
   display: flex;
   flex-direction: inherit;
+}
+
+.shell__panel {
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
+  padding: 0 10px 10px;
+  user-select: text;
+}
+
+.shell--bottom .shell__panel {
+  padding: 10px 10px 0;
+}
+
+/* Shared fade for content revealed by a morph. */
+.shell__dock,
+.shell__panel {
   opacity: 0;
   transition: opacity 120ms ease;
 }
 
-.shell--open .shell__items {
+.shell__dock.is-visible,
+.shell__panel.is-visible {
   opacity: 1;
   transition: opacity 180ms ease 60ms;
+}
+
+.widget-placeholder {
+  margin: 0;
+  padding: 16px 6px;
+  color: rgba(255, 255, 255, 0.6);
+  font: 13px "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  text-align: center;
 }

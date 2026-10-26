@@ -3,9 +3,9 @@ mod morph;
 mod pacing;
 
 use tauri::{
+    Manager,
     menu::{Menu, MenuItem},
     tray::TrayIconBuilder,
-    Manager,
 };
 
 /// Style the window frame for the glass look: ask Windows 11 to round the corners
@@ -16,8 +16,8 @@ use tauri::{
 fn style_glass_frame(window: &tauri::WebviewWindow) {
     use windows::Win32::Foundation::HWND;
     use windows::Win32::Graphics::Dwm::{
-        DwmSetWindowAttribute, DWMWA_BORDER_COLOR, DWMWA_COLOR_NONE,
-        DWMWA_WINDOW_CORNER_PREFERENCE, DWMWCP_ROUND, DWMWINDOWATTRIBUTE,
+        DWMWA_BORDER_COLOR, DWMWA_COLOR_NONE, DWMWA_WINDOW_CORNER_PREFERENCE, DWMWCP_ROUND,
+        DWMWINDOWATTRIBUTE, DwmSetWindowAttribute,
     };
 
     let Ok(hwnd) = window.hwnd() else { return };
@@ -50,7 +50,11 @@ fn keep_backdrop_active(window: &tauri::WebviewWindow) {
         _id: usize,
         _data: usize,
     ) -> LRESULT {
-        let wparam = if msg == WM_NCACTIVATE { WPARAM(1) } else { wparam };
+        let wparam = if msg == WM_NCACTIVATE {
+            WPARAM(1)
+        } else {
+            wparam
+        };
         unsafe { DefSubclassProc(hwnd, msg, wparam, lparam) }
     }
 
@@ -64,6 +68,7 @@ fn keep_backdrop_active(window: &tauri::WebviewWindow) {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             drag::start_drag,

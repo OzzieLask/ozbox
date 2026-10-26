@@ -143,8 +143,7 @@ mod imp {
     /// include `pos` so a window already partly off-screen doesn't jump on release.
     fn glide_bounds(window: &WebviewWindow, pos: Vec2) -> (Vec2, Vec2) {
         let unbounded = ((f64::MIN, f64::MIN), (f64::MAX, f64::MAX));
-        let (Ok(Some(monitor)), Ok(size)) = (window.current_monitor(), window.outer_size())
-        else {
+        let (Ok(Some(monitor)), Ok(size)) = (window.current_monitor(), window.outer_size()) else {
             return unbounded;
         };
         let area = monitor.work_area();
@@ -160,7 +159,10 @@ mod imp {
     }
 
     fn move_to(window: &WebviewWindow, pos: Vec2) {
-        let _ = window.set_position(PhysicalPosition::new(pos.0.round() as i32, pos.1.round() as i32));
+        let _ = window.set_position(PhysicalPosition::new(
+            pos.0.round() as i32,
+            pos.1.round() as i32,
+        ));
     }
 
     fn cursor_pos() -> Option<Vec2> {
