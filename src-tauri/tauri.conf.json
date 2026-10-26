@@ -12,9 +12,30 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "OzBox",
-        "width": 800,
-        "height": 600
+        "width": 56,
+        "height": 56,
+        "resizable": false,
+        "maximizable": false,
+        "minimizable": false,
+        "decorations": false,
+        "transparent": true,
+        "shadow": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "visible": false,
+        "windowEffects": {
+          "effects": [
+            "acrylic"
+          ],
+          "color": [
+            255,
+            255,
+            255,
+            4
+          ]
+        }
       }
     ],
     "security": {

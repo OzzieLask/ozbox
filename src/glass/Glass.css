@@ -1,0 +1,56 @@
+.glass {
+  /* Matches the corner radius Windows 11 gives the window, so the rim lines up. */
+  --glass-radius: 8px;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: var(--glass-radius);
+  overflow: hidden;
+
+  /* Sheen: light pooling top-left and a faint glow along the bottom. */
+  background:
+    radial-gradient(120% 80% at 15% 0%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 50%),
+    radial-gradient(90% 50% at 70% 110%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+
+  /* Bevelled rim: a bright lit edge top-left, a softer one bottom-right,
+     and an inner glow that reads as glass thickness. */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    inset 1.5px 1.5px 1px -0.5px rgba(255, 255, 255, 0.75),
+    inset -1.5px -1.5px 1px -0.5px rgba(255, 255, 255, 0.35),
+    inset 0 0 10px rgba(255, 255, 255, 0.18);
+}
+
+/* Colour fringe: a thin ring of dispersion on the edge, strongest bottom-right,
+   like light splitting through the glass edge. */
+.glass__fringe {
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 90deg,
+    transparent 0deg,
+    rgba(255, 80, 120, 0.55) 30deg,
+    rgba(255, 210, 90, 0.5) 60deg,
+    rgba(90, 230, 160, 0.5) 90deg,
+    rgba(90, 160, 255, 0.55) 120deg,
+    transparent 160deg,
+    transparent 360deg
+  );
+  /* Keep only the ring: full box minus the content box. */
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  filter: blur(0.6px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.glass__content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
