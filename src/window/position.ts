@@ -4,6 +4,7 @@ import {
   getCurrentWindow,
   PhysicalPosition,
 } from "@tauri-apps/api/window";
+import { currentAnchor, TILE_SIZE } from "./morph";
 
 const STORAGE_KEY = "ozbox.orb.position";
 const EDGE_MARGIN = 16; // logical px from the screen edge
@@ -51,12 +52,21 @@ export async function placeOrbWindow(): Promise<() => void> {
   await win.setPosition(new PhysicalPosition(pos.x, pos.y));
   await win.show();
 
-  // Moved fires continuously while dragging; only save once it settles.
+  // Moved fires continuously while dragging or morphing; only save once it settles.
   let timer: number | undefined;
   return win.onMoved(({ payload }) => {
     clearTimeout(timer);
-    timer = window.setTimeout(() => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ x: payload.x, y: payload.y }));
+    timer = window.setTimeout(async () => {
+      // Save where the tile is, not the window: when expanded, the tile sits in the
+      // anchored corner, so the app always relaunches collapsed in the right spot.
+      const [size, scale] = await Promise.all([win.outerSize(), win.scaleFactor()]);
+      const tile = Math.round(TILE_SIZE * scale);
+      const { right, bottom } = currentAnchor();
+      const pos = {
+        x: right ? payload.x + size.width - tile : payload.x,
+        y: bottom ? payload.y + size.height - tile : payload.y,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(pos));
     }, SAVE_DELAY_MS);
   });
 }

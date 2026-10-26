@@ -1,4 +1,6 @@
 mod drag;
+mod morph;
+mod pacing;
 
 use tauri::{
     menu::{Menu, MenuItem},
@@ -66,7 +68,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             drag::start_drag,
             drag::end_drag,
-            drag::stop_glide
+            drag::stop_glide,
+            morph::morph
         ])
         .setup(|app| {
             #[cfg(windows)]

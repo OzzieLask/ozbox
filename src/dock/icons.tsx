@@ -1,0 +1,37 @@
+import type { SVGProps } from "react";
+
+// 20px line icons drawn on a 24-unit grid, stroked in the current text colour.
+function Icon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      {...props}
+    />
+  );
+}
+
+export function NotesIcon() {
+  return (
+    <Icon>
+      <rect x="4.5" y="3.5" width="15" height="17" rx="3" />
+      <path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4" />
+    </Icon>
+  );
+}
+
+export function TimerIcon() {
+  return (
+    <Icon>
+      <circle cx="12" cy="13.5" r="7" />
+      <path d="M12 13.5V10M10 3h4M18.5 6.5l-1.3 1.3" />
+    </Icon>
+  );
+}

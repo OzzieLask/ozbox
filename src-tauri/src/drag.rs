@@ -53,11 +53,11 @@ pub fn stop_glide() {
 #[cfg(windows)]
 mod imp {
     use super::*;
+    use crate::pacing::wait_frame;
     use std::collections::VecDeque;
     use std::time::Instant;
     use tauri::PhysicalPosition;
     use windows::Win32::Foundation::POINT;
-    use windows::Win32::Graphics::Dwm::DwmFlush;
     use windows::Win32::UI::Input::KeyboardAndMouse::{GetAsyncKeyState, VK_LBUTTON, VK_RBUTTON};
     use windows::Win32::UI::WindowsAndMessaging::{GetCursorPos, GetSystemMetrics, SM_SWAPBUTTON};
 
@@ -174,12 +174,5 @@ mod imp {
         let swapped = unsafe { GetSystemMetrics(SM_SWAPBUTTON) } != 0;
         let key = if swapped { VK_RBUTTON } else { VK_LBUTTON };
         (unsafe { GetAsyncKeyState(key.0 as i32) } as u16 & 0x8000) != 0
-    }
-
-    /// Block until the next compositor frame, so movement matches the display's refresh rate.
-    fn wait_frame() {
-        if unsafe { DwmFlush() }.is_err() {
-            std::thread::sleep(std::time::Duration::from_millis(8));
-        }
     }
 }

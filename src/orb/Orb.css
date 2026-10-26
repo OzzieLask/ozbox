@@ -1,9 +1,11 @@
 /* The glass look comes from <Glass>; this only handles the button and lettering. */
-.orb__button {
-  width: 100%;
-  height: 100%;
+.orb {
+  flex: none;
+  width: var(--tile-size);
+  height: var(--tile-size);
   padding: 0;
   border: none;
+  border-radius: 8px;
   background: transparent;
   cursor: pointer;
   outline: none;
@@ -12,16 +14,12 @@
   transition: background-color 160ms ease;
 }
 
-.orb__button:hover {
+.orb:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.orb__button:active {
+.orb:active {
   background-color: rgba(0, 0, 0, 0.06);
-}
-
-.orb--active .orb__button {
-  background-color: rgba(140, 180, 255, 0.2);
 }
 
 /* Bright, slightly raised lettering, like the glyphs on Apple's glass tiles. */
@@ -35,4 +33,11 @@
     0 1px 1px rgba(0, 0, 0, 0.18),
     0 0 8px rgba(255, 255, 255, 0.25);
   pointer-events: none;
+  transition: text-shadow 200ms ease;
+}
+
+.orb--active .orb__label {
+  text-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.18),
+    0 0 10px rgba(160, 195, 255, 0.7);
 }
