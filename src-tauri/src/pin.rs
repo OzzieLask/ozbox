@@ -31,8 +31,14 @@ const PAGE_SIZE: (f64, f64) = (480.0, 270.0);
 /// the same browser arguments: keep in sync with `additionalBrowserArgs` in tauri.conf.json.
 const OZBOX_BROWSER_ARGS: &str =
     "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --disable-gpu";
-/// Pinned pages get their own profile, with the GPU on so video plays smoothly.
-const PAGE_BROWSER_ARGS: &str = "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection";
+/// Pinned pages (and the whiteboard) get their own profile, with the GPU on so video
+/// and drawing are smooth. Sharing one profile means they share one browser process.
+pub(crate) const GPU_BROWSER_ARGS: &str =
+    "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection";
+
+pub(crate) fn gpu_profile(app: &AppHandle) -> tauri::Result<std::path::PathBuf> {
+    Ok(app.path().app_local_data_dir()?.join("pinned-pages"))
+}
 
 #[derive(Clone, Serialize)]
 pub struct PinInfo {
@@ -138,18 +144,14 @@ fn open(app: AppHandle, url: Url, title: String) -> Result<u32, String> {
         )
         .map_err(err)?;
 
-    let profile = app
-        .path()
-        .app_local_data_dir()
-        .map_err(err)?
-        .join("pinned-pages");
+    let profile = gpu_profile(&app).map_err(err)?;
     let popups_app = app.clone();
     let title_app = app.clone();
     let page = window
         .add_child(
             WebviewBuilder::new(format!("pinpage-{id}"), WebviewUrl::External(url.clone()))
                 .data_directory(profile)
-                .additional_browser_args(PAGE_BROWSER_ARGS)
+                .additional_browser_args(GPU_BROWSER_ARGS)
                 // Links that would open a new window/tab go to the user's browser instead.
                 .on_new_window(move |url, _| {
                     let _ = popups_app.opener().open_url(url.as_str(), None::<&str>);

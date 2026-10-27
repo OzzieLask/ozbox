@@ -116,6 +116,15 @@ export function PreviousIcon() {
   );
 }
 
+export function WhiteboardIcon() {
+  return (
+    <Icon>
+      <path d="M4.5 19.5l1.2-4.3L16 4.9a2.1 2.1 0 0 1 3 3L8.8 18.3z" />
+      <path d="M14.5 6.5l3 3M13 20h7" />
+    </Icon>
+  );
+}
+
 export function PinIcon() {
   return (
     <Icon>

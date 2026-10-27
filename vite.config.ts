@@ -8,10 +8,10 @@ const host = process.env.TAURI_DEV_HOST;
 export default defineConfig(() => ({
   plugins: [react()],
 
-  // Two pages: the main OzBox window, and the glass bar on top of pinned pages.
+  // Pages: the main OzBox window, the glass bar on pinned pages, and the whiteboard overlay.
   build: {
     rolldownOptions: {
-      input: { main: "index.html", pinbar: "pin-bar.html" },
+      input: { main: "index.html", pinbar: "pin-bar.html", whiteboard: "whiteboard.html" },
     },
   },
 

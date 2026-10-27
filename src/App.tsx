@@ -3,6 +3,7 @@ import { Glass } from "./glass/Glass";
 import { Orb } from "./orb/Orb";
 import { Dock, DOCK_ITEM_SIZE, DOCK_PADDING } from "./dock/Dock";
 import { findWidget, WIDGETS } from "./widgets/registry";
+import { COLLAPSE_REQUEST } from "./widgets/shell";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { placeOrbWindow, resetOrbPosition } from "./window/position";
@@ -104,6 +105,15 @@ export default function App() {
     return () => {
       unlisten.then((off) => off());
     };
+  }, []);
+
+  // A widget asked to get out of the way (e.g. the whiteboard started drawing).
+  useEffect(() => {
+    const collapse = () => {
+      if (viewRef.current.kind !== "tile") goToRef.current({ kind: "tile" });
+    };
+    window.addEventListener(COLLAPSE_REQUEST, collapse);
+    return () => window.removeEventListener(COLLAPSE_REQUEST, collapse);
   }, []);
 
   const onOrbClick = () => {

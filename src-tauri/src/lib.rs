@@ -11,6 +11,7 @@ mod morph;
 mod pacing;
 mod pin;
 mod tray;
+mod whiteboard;
 
 use tauri::Manager;
 
@@ -23,6 +24,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .manage(pin::Pins::default())
         .manage(apps::PinnedApps::default())
+        .manage(whiteboard::WhiteboardMode::default())
         .invoke_handler(tauri::generate_handler![
             apps::list_app_windows,
             apps::set_app_on_top,
@@ -40,7 +42,9 @@ pub fn run() {
             pin::open_pin,
             pin::pin_file,
             pin::list_pins,
-            pin::close_pin
+            pin::close_pin,
+            whiteboard::whiteboard_mode,
+            whiteboard::set_whiteboard_mode
         ])
         .setup(|app| {
             #[cfg(windows)]
