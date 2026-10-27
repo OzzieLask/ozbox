@@ -54,3 +54,38 @@ export function drawingsFile(): Promise<Store> {
 export async function clearDrawings() {
   await (await drawingsFile()).set(STROKES_KEY, []);
 }
+
+/** True while there's a saved drawing, whether or not the whiteboard is on. */
+export function useHasDrawing(): boolean {
+  const [has, setHas] = useState(false);
+  useEffect(() => {
+    let unlisten: (() => void) | undefined;
+    let cancelled = false;
+    drawingsFile().then(async (f) => {
+      const strokes = await f.get<Stroke[]>(STROKES_KEY);
+      if (!cancelled) setHas((strokes?.length ?? 0) > 0);
+      unlisten = await f.onKeyChange<Stroke[]>(STROKES_KEY, (value) => setHas((value?.length ?? 0) > 0));
+    });
+    return () => {
+      cancelled = true;
+      unlisten?.();
+    };
+  }, []);
+  return has;
+}
+
+// ---- Toolbar <-> layer messages (the toolbar is its own glass window) ----
+
+export type Tool = ShapeKind | "laser" | "eraser";
+export type ToolSettings = { tool: Tool; color: string; size: number };
+export type Action = "undo" | "redo" | "clear";
+export type History = { canUndo: boolean; canRedo: boolean; hasDrawing: boolean };
+
+/** Toolbar -> layer: the chosen tool, color and size. */
+export const TOOL_EVENT = "ozbox://wb-tool";
+/** Toolbar -> layer: undo / redo / clear. */
+export const ACTION_EVENT = "ozbox://wb-action";
+/** Layer -> toolbar: what undo/redo can do, so buttons can disable. */
+export const HISTORY_EVENT = "ozbox://wb-history";
+/** Layer -> toolbar: "I just loaded; send me the current tool". */
+export const READY_EVENT = "ozbox://wb-ready";

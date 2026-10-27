@@ -11,7 +11,7 @@ export default defineConfig(() => ({
   // Pages: the main OzBox window, the glass bar on pinned pages, and the whiteboard overlay.
   build: {
     rolldownOptions: {
-      input: { main: "index.html", pinbar: "pin-bar.html", whiteboard: "whiteboard.html" },
+      input: { main: "index.html", pinbar: "pin-bar.html", whiteboard: "whiteboard.html", wbToolbar: "wb-toolbar.html" },
     },
   },
 

@@ -19,12 +19,21 @@ use tauri::Manager;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .plugin(
+            tauri_plugin_global_shortcut::Builder::new()
+                .with_handler(|app, shortcut, event| {
+                    if event.state() == tauri_plugin_global_shortcut::ShortcutState::Pressed {
+                        whiteboard::on_shortcut(app, shortcut);
+                    }
+                })
+                .build(),
+        )
         .plugin(tauri_plugin_autostart::Builder::new().build())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .manage(pin::Pins::default())
         .manage(apps::PinnedApps::default())
-        .manage(whiteboard::WhiteboardMode::default())
+        .manage(whiteboard::Whiteboard::default())
         .invoke_handler(tauri::generate_handler![
             apps::list_app_windows,
             apps::set_app_on_top,
@@ -44,7 +53,8 @@ pub fn run() {
             pin::list_pins,
             pin::close_pin,
             whiteboard::whiteboard_mode,
-            whiteboard::set_whiteboard_mode
+            whiteboard::set_whiteboard_mode,
+            whiteboard::fit_whiteboard_toolbar
         ])
         .setup(|app| {
             #[cfg(windows)]

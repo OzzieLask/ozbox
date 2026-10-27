@@ -87,3 +87,116 @@
   margin: 0;
   color: rgba(255, 150, 150, 1);
 }
+
+.wb-panel__mode:disabled {
+  cursor: default;
+}
+
+.wb-panel__clear:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
+.wb-panel__clear:disabled:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ---- Status line ---- */
+
+.wb-panel__status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.wb-panel__status--draw {
+  color: rgba(165, 200, 255, 1);
+}
+
+.wb-panel__status--view {
+  color: rgba(150, 230, 205, 1);
+}
+
+.wb-panel__saved {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ---- Indicators: on the OZ tile and the dock icon ---- */
+
+/* While on, the tile glows: blue while drawing, teal while drawings are shown. */
+.wb-tile-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.wb-tile-ring--draw {
+  box-shadow:
+    inset 0 0 0 1.5px rgba(150, 190, 255, 0.85),
+    inset 0 0 14px rgba(140, 180, 255, 0.55);
+}
+
+.wb-tile-ring--view {
+  box-shadow:
+    inset 0 0 0 1.5px rgba(130, 225, 200, 0.6),
+    inset 0 0 12px rgba(120, 220, 190, 0.35);
+}
+
+.wb-tile-badge,
+.wb-glance {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.wb-tile-badge {
+  right: 4px;
+  bottom: 4px;
+  width: 17px;
+  height: 17px;
+}
+
+.wb-glance {
+  right: 1px;
+  bottom: 1px;
+  width: 15px;
+  height: 15px;
+}
+
+.wb-glance svg {
+  width: 10px;
+  height: 10px;
+}
+
+.wb-tile-badge--draw,
+.wb-glance--draw {
+  background: rgba(110, 160, 255, 0.95);
+}
+
+.wb-tile-badge--view,
+.wb-glance--view {
+  background: rgba(60, 185, 155, 0.95);
+}
+
+/* Off, but a drawing is saved: a small quiet dot. */
+.wb-tile-badge--saved,
+.wb-glance--saved {
+  width: 7px;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.6);
+}
+
+.wb-tile-badge--saved {
+  right: 6px;
+  bottom: 6px;
+}
+
+.wb-glance--saved {
+  right: 5px;
+  bottom: 5px;
+}

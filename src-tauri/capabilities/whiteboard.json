@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "whiteboard",
-  "description": "The whiteboard overlay: save its drawings and hear mode changes.",
-  "windows": ["whiteboard"],
+  "description": "The whiteboard layer (save its drawings, hear changes) and its toolbar (send tool choices to the layer).",
+  "windows": ["whiteboard-*", "wbbar-*"],
   "permissions": ["core:event:default", "store:default"]
 }

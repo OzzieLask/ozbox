@@ -14,6 +14,8 @@ pub const RESET_POSITION_EVENT: &str = "ozbox://reset-position";
 pub fn build(app: &App) -> tauri::Result<()> {
     let toggle = MenuItem::with_id(app, "toggle", "Hide OzBox", true, None::<&str>)?;
     let reset = MenuItem::with_id(app, "reset", "Reset position", true, None::<&str>)?;
+    let whiteboard_off =
+        MenuItem::with_id(app, "whiteboard-off", "Turn off whiteboard", true, None::<&str>)?;
 
     // Autostart registers this exe's path with Windows; a dev build launched that way
     // has no dev server to load its UI from, so only offer it in release builds.
@@ -37,6 +39,7 @@ pub fn build(app: &App) -> tauri::Result<()> {
         &[
             &toggle,
             &reset,
+            &whiteboard_off,
             &PredefinedMenuItem::separator(app)?,
             &autostart,
             &PredefinedMenuItem::separator(app)?,
@@ -79,6 +82,12 @@ pub fn build(app: &App) -> tauri::Result<()> {
                 if result.is_err() {
                     let _ = autostart.set_checked(!want);
                 }
+            }
+            "whiteboard-off" => {
+                let app = app.clone();
+                tauri::async_runtime::spawn(async move {
+                    let _ = crate::whiteboard::set_mode(&app, "off").await;
+                });
             }
             "quit" => app.exit(0),
             _ => {}

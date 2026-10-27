@@ -1,14 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { emit, listen } from "@tauri-apps/api/event";
 import {
+  ACTION_EVENT,
+  type Action,
   drawingsFile,
+  HISTORY_EVENT,
   type Point,
+  READY_EVENT,
   setMode,
   type Stroke,
   STROKES_KEY,
+  TOOL_EVENT,
+  type Tool,
+  type ToolSettings,
   useWhiteboardMode,
 } from "../widgets/whiteboard/shared";
 import { drawLaser, drawStroke, hits, LASER_FADE_MS, type LaserPoint } from "./draw";
-import { type Tool, Toolbar } from "./Toolbar";
 
 const ERASER_RADIUS = 10;
 const UNDO_LIMIT = 100;
@@ -26,9 +33,12 @@ function fitCanvas(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
 export function Whiteboard() {
   const mode = useWhiteboardMode();
   const [strokes, setStrokes] = useState<Stroke[]>([]);
-  const [tool, setTool] = useState<Tool>("pen");
-  const [color, setColor] = useState("#ff4d4d");
-  const [size, setSize] = useState(4);
+  // Chosen in the toolbar window (Toolbar.tsx), which tells us over events.
+  const [{ tool, color, size }, setSettings] = useState<ToolSettings>({
+    tool: "pen" as Tool,
+    color: "#ff3b30",
+    size: 4,
+  });
 
   // Undo history: earlier versions of the drawing. Not saved; per session.
   const past = useRef<Stroke[][]>([]);
@@ -230,18 +240,55 @@ export function Whiteboard() {
     renderLive();
   };
 
+  // ---- Toolbar window ----
+
+  // Ask the toolbar for the current tool, then follow its changes and actions.
+  useEffect(() => {
+    const offTool = listen<ToolSettings>(TOOL_EVENT, ({ payload }) => setSettings(payload));
+    emit(READY_EVENT);
+    return () => {
+      offTool.then((off) => off());
+    };
+  }, []);
+
+  const runAction = useCallback(
+    (action: Action) => {
+      if (action === "undo") undo();
+      else if (action === "redo") redo();
+      else if (strokesRef.current.length) commit([]);
+    },
+    [undo, redo, commit],
+  );
+
+  useEffect(() => {
+    const offAction = listen<Action>(ACTION_EVENT, ({ payload }) => runAction(payload));
+    return () => {
+      offAction.then((off) => off());
+    };
+  }, [runAction]);
+
+  // Keep the toolbar's undo/redo/clear buttons in step.
+  useEffect(() => {
+    emit(HISTORY_EVENT, {
+      canUndo: past.current.length > 0,
+      canRedo: future.current.length > 0,
+      hasDrawing: strokes.length > 0,
+    });
+  }, [strokes]);
+
   // ---- Keyboard ----
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      // Esc is also a native shortcut while drawing (whiteboard.rs), so it works
+      // even if this page doesn't; handling it here too is harmless.
       if (e.key === "Escape") setMode("off");
-      else if (e.ctrlKey && e.key.toLowerCase() === "z" && e.shiftKey) redo();
-      else if (e.ctrlKey && e.key.toLowerCase() === "z") undo();
-      else if (e.ctrlKey && e.key.toLowerCase() === "y") redo();
+      else if (e.ctrlKey && e.key.toLowerCase() === "z") runAction(e.shiftKey ? "redo" : "undo");
+      else if (e.ctrlKey && e.key.toLowerCase() === "y") runAction("redo");
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [undo, redo]);
+  }, [runAction]);
 
   return (
     <div className={`board board--${mode}`}>
@@ -258,23 +305,6 @@ export function Whiteboard() {
           renderLive();
         }}
       />
-      {mode === "draw" && (
-        <Toolbar
-          tool={tool}
-          color={color}
-          size={size}
-          onTool={setTool}
-          onColor={setColor}
-          onSize={setSize}
-          canUndo={past.current.length > 0}
-          canRedo={future.current.length > 0}
-          onUndo={undo}
-          onRedo={redo}
-          onClear={() => strokes.length && commit([])}
-          onView={() => setMode("view")}
-          onDone={() => setMode("off")}
-        />
-      )}
     </div>
   );
 }

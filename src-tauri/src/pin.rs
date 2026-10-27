@@ -29,7 +29,7 @@ const PAGE_SIZE: (f64, f64) = (480.0, 270.0);
 
 /// The bar shares OzBox's browser profile, and webviews sharing a profile must use
 /// the same browser arguments: keep in sync with `additionalBrowserArgs` in tauri.conf.json.
-const OZBOX_BROWSER_ARGS: &str =
+pub(crate) const OZBOX_BROWSER_ARGS: &str =
     "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --disable-gpu";
 /// Pinned pages (and the whiteboard) get their own profile, with the GPU on so video
 /// and drawing are smooth. Sharing one profile means they share one browser process.

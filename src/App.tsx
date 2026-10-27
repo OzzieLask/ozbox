@@ -17,6 +17,9 @@ const COLLAPSE_MS = FADE_OUT_MS + 300;
 /** Sent by the tray's "Reset position" item (tray.rs). */
 const RESET_POSITION_EVENT = "ozbox://reset-position";
 
+/** Widgets that draw something on the OZ tile. */
+const TILE_BADGES = WIDGETS.flatMap(({ id, TileBadge }) => (TileBadge ? [{ id, TileBadge }] : []));
+
 const DOCK_WIDTH = TILE_SIZE + DOCK_PADDING + WIDGETS.length * DOCK_ITEM_SIZE;
 
 /** What the window is showing: just the tile, the dock strip, or a widget's panel. */
@@ -152,7 +155,12 @@ export default function App() {
           grows, it uncovers more of the layout rather than reflowing it. */}
       <div className={shellClass} style={{ width: size.width, height: size.height }}>
         <div className="shell__header">
-          <Orb active={view.kind !== "tile"} alert={alertingId !== undefined} onClick={onOrbClick} />
+          <Orb
+            active={view.kind !== "tile"}
+            alert={alertingId !== undefined}
+            badges={TILE_BADGES.map(({ id, TileBadge }) => <TileBadge key={id} />)}
+            onClick={onOrbClick}
+          />
           <div className={`shell__dock${dockVisible ? " is-visible" : ""}`}>
             <Dock
               widgets={WIDGETS}

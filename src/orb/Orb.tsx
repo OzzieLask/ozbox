@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { type ReactNode, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./Orb.css";
 
@@ -8,6 +8,8 @@ type OrbProps = {
   active: boolean;
   /** A widget wants attention: pulse until clicked. */
   alert: boolean;
+  /** Widgets' tile badges, drawn over the tile. */
+  badges?: ReactNode;
   onClick: () => void;
 };
 
@@ -21,7 +23,7 @@ function send(cmd: string, args?: Record<string, unknown>) {
 }
 
 /** The OZ button: click to toggle the control center, press-and-move to drag the window. */
-export function Orb({ active, alert, onClick }: OrbProps) {
+export function Orb({ active, alert, badges, onClick }: OrbProps) {
   const press = useRef<Press | null>(null);
 
   return (
@@ -58,6 +60,7 @@ export function Orb({ active, alert, onClick }: OrbProps) {
       }}
     >
       <span className="orb__label">OZ</span>
+      {badges && <span className="orb__badges">{badges}</span>}
     </button>
   );
 }

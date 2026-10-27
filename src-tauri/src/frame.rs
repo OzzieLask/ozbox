@@ -35,6 +35,9 @@ pub enum Hook {
     Main = 1,
     /// Any other glass window, e.g. a pin.
     Glass = 0,
+    /// Never activated by clicks (the whiteboard layer): activating an always-on-top
+    /// window lifts it above the others, which would bury its toolbar and the tile.
+    NoActivate = 2,
 }
 
 /// Hook the window's messages:
@@ -54,7 +57,10 @@ pub fn hook_window_messages(hwnd: HWND, hook: Hook) {
     ) -> LRESULT {
         match msg {
             WM_NCACTIVATE => unsafe { DefSubclassProc(hwnd, msg, WPARAM(1), lparam) },
-            WM_MOUSEACTIVATE if hook == Hook::Main as usize && focus::blocks_activation() => {
+            WM_MOUSEACTIVATE
+                if hook == Hook::NoActivate as usize
+                    || (hook == Hook::Main as usize && focus::blocks_activation()) =>
+            {
                 LRESULT(MA_NOACTIVATE as isize)
             }
             _ => unsafe { DefSubclassProc(hwnd, msg, wparam, lparam) },
@@ -63,5 +69,16 @@ pub fn hook_window_messages(hwnd: HWND, hook: Hook) {
 
     unsafe {
         let _ = SetWindowSubclass(hwnd, Some(window_proc), 1, hook as usize);
+    }
+}
+
+/// Give a window the "clicks don't activate me" style (pairs with Hook::NoActivate).
+pub fn set_no_activate(hwnd: HWND) {
+    use windows::Win32::UI::WindowsAndMessaging::{
+        GWL_EXSTYLE, GetWindowLongPtrW, SetWindowLongPtrW, WS_EX_NOACTIVATE,
+    };
+    unsafe {
+        let style = GetWindowLongPtrW(hwnd, GWL_EXSTYLE);
+        SetWindowLongPtrW(hwnd, GWL_EXSTYLE, style | WS_EX_NOACTIVATE.0 as isize);
     }
 }
