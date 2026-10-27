@@ -2,9 +2,9 @@
 //! where you show/hide it, reset it, choose whether it starts with Windows, and quit.
 
 use tauri::{
+    App, AppHandle, Emitter, Manager, Wry,
     menu::{CheckMenuItem, Menu, MenuItem, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    App, AppHandle, Emitter, Manager, Wry,
 };
 use tauri_plugin_autostart::ManagerExt;
 
@@ -21,7 +21,11 @@ pub fn build(app: &App) -> tauri::Result<()> {
     let autostart = CheckMenuItem::with_id(
         app,
         "autostart",
-        if installed { "Launch at startup" } else { "Launch at startup (installed app only)" },
+        if installed {
+            "Launch at startup"
+        } else {
+            "Launch at startup (installed app only)"
+        },
         installed,
         installed && app.autolaunch().is_enabled().unwrap_or(false),
         None::<&str>,
@@ -67,7 +71,11 @@ pub fn build(app: &App) -> tauri::Result<()> {
                 // The check mark has already flipped; make Windows match it.
                 let want = autostart.is_checked().unwrap_or(false);
                 let manager = app.autolaunch();
-                let result = if want { manager.enable() } else { manager.disable() };
+                let result = if want {
+                    manager.enable()
+                } else {
+                    manager.disable()
+                };
                 if result.is_err() {
                     let _ = autostart.set_checked(!want);
                 }
@@ -89,7 +97,13 @@ fn toggle_visibility(app: &AppHandle, item: &MenuItem<Wry>) {
 }
 
 fn set_visible(app: &AppHandle, item: &MenuItem<Wry>, visible: bool) {
-    let Some(window) = app.get_webview_window("main") else { return };
-    let _ = if visible { window.show() } else { window.hide() };
+    let Some(window) = app.get_webview_window("main") else {
+        return;
+    };
+    let _ = if visible {
+        window.show()
+    } else {
+        window.hide()
+    };
     let _ = item.set_text(if visible { "Hide OzBox" } else { "Show OzBox" });
 }

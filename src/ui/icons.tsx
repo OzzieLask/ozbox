@@ -36,6 +36,23 @@ export function ChecklistIcon() {
   );
 }
 
+export function FolderIcon() {
+  return (
+    <Icon width="18" height="18">
+      <path d="M3.5 7.5a2 2 0 0 1 2-2h3.6l2 2.2h7.4a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z" />
+    </Icon>
+  );
+}
+
+export function PinIcon() {
+  return (
+    <Icon>
+      <rect x="3.5" y="5" width="17" height="13" rx="2.5" />
+      <path d="M3.5 9h17M12 18v3M9 21h6" />
+    </Icon>
+  );
+}
+
 export function TimerIcon() {
   return (
     <Icon>

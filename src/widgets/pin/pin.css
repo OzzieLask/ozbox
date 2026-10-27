@@ -1,0 +1,224 @@
+.pin {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.pin button,
+.pin input {
+  font: inherit;
+  color: inherit;
+  outline: none;
+}
+
+.pin button {
+  border: none;
+  cursor: pointer;
+}
+
+.pin__form {
+  display: flex;
+  gap: 6px;
+}
+
+.pin__input {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+  font-size: 13px;
+}
+
+.pin__input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.pin__go {
+  flex: none;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: rgba(140, 180, 255, 0.4);
+  font-weight: 600;
+  transition: background-color 120ms ease;
+}
+
+.pin__go:hover:not(:disabled) {
+  background: rgba(140, 180, 255, 0.55);
+}
+
+.pin__go:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.pin__icon-button {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  padding: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  transition: background-color 120ms ease;
+}
+
+.pin__icon-button:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* ---- Shortcut tabs ---- */
+
+.pin__shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.pin__chip {
+  position: relative;
+  display: flex;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  transition: background-color 120ms ease;
+}
+
+.pin__chip:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.pin__chip-open {
+  padding: 0 10px;
+  border-radius: 6px;
+  background: transparent;
+  white-space: nowrap;
+}
+
+/* Remove button appears on hover, overlapping the chip's corner. */
+.pin__chip-remove {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: none;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(60, 64, 82, 0.95);
+  font-size: 11px;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.pin__chip:hover .pin__chip-remove {
+  display: grid;
+}
+
+.pin__chip-remove:hover {
+  background: rgba(230, 80, 80, 0.95);
+}
+
+.pin__chip--add {
+  width: 26px;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  font-size: 15px;
+  opacity: 0.7;
+}
+
+.pin__chip--add:hover {
+  opacity: 1;
+}
+
+.pin__chip-rename {
+  width: 80px;
+  height: 22px;
+  padding: 0 6px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* ---- Drop target ---- */
+
+.pin.is-dropping {
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1.5px rgba(150, 190, 255, 0.85);
+  background: rgba(140, 180, 255, 0.1);
+}
+
+.pin__drop-hint {
+  margin: auto 0;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(185, 210, 255, 1);
+  pointer-events: none;
+}
+
+.pin__error {
+  margin: 0;
+  color: rgba(255, 150, 150, 1);
+}
+
+.pin__list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pin__empty {
+  margin: auto 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pin__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 4px 0 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.pin__row-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pin__row-host {
+  opacity: 0.5;
+}
+
+.pin__row-close {
+  flex: none;
+  width: 24px;
+  height: 22px;
+  padding: 0;
+  border-radius: 5px;
+  background: transparent;
+  font-size: 15px;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.pin__row-close:hover {
+  background: rgba(255, 90, 90, 0.7);
+  opacity: 1;
+}

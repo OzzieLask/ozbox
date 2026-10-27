@@ -8,6 +8,13 @@ const host = process.env.TAURI_DEV_HOST;
 export default defineConfig(() => ({
   plugins: [react()],
 
+  // Two pages: the main OzBox window, and the glass bar on top of pinned pages.
+  build: {
+    rolldownOptions: {
+      input: { main: "index.html", pinbar: "pin-bar.html" },
+    },
+  },
+
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent Vite from obscuring rust errors

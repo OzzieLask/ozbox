@@ -24,8 +24,8 @@ mod imp {
     use tauri::WebviewWindow;
     use windows::Win32::Foundation::HWND;
     use windows::Win32::UI::WindowsAndMessaging::{
-        GetForegroundWindow, GetWindowLongPtrW, IsWindow, SetForegroundWindow, SetWindowLongPtrW,
-        GWL_EXSTYLE, WS_EX_NOACTIVATE,
+        GWL_EXSTYLE, GetForegroundWindow, GetWindowLongPtrW, IsWindow, SetForegroundWindow,
+        SetWindowLongPtrW, WS_EX_NOACTIVATE,
     };
 
     static NO_ACTIVATE: AtomicBool = AtomicBool::new(true);
@@ -62,7 +62,10 @@ mod imp {
                 // Only hand focus back if we still have it; if the user has already
                 // moved on to another app, leave them there.
                 let previous = HWND(PREVIOUS.swap(0, Ordering::SeqCst) as *mut _);
-                if GetForegroundWindow() == ours && !previous.is_invalid() && IsWindow(Some(previous)).as_bool() {
+                if GetForegroundWindow() == ours
+                    && !previous.is_invalid()
+                    && IsWindow(Some(previous)).as_bool()
+                {
                     let _ = SetForegroundWindow(previous);
                 }
             }

@@ -36,7 +36,8 @@
             4
           ]
         },
-        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --disable-gpu"
+        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --disable-gpu",
+        "dragDropEnabled": false
       }
     ],
     "security": {

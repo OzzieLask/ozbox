@@ -9,6 +9,17 @@ if (!import.meta.env.DEV) {
   document.addEventListener("contextmenu", (e) => e.preventDefault());
 }
 
+// Nothing outside a drop zone accepts drops: without this, dropping a file anywhere
+// would navigate the whole window to it.
+for (const type of ["dragover", "drop"] as const) {
+  document.addEventListener(type, (e) => {
+    if (!e.defaultPrevented) {
+      e.preventDefault();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = "none";
+    }
+  });
+}
+
 // Load saved widget state first, so nothing renders (or gets typed into) before it.
 initWidgetStorage().finally(() => {
   ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
