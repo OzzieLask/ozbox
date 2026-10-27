@@ -1,10 +1,12 @@
 mod apps;
+mod audio;
 mod drag;
 #[cfg(windows)]
 mod drop;
 mod focus;
 #[cfg(windows)]
 mod frame;
+mod media;
 mod morph;
 mod pacing;
 mod pin;
@@ -25,10 +27,15 @@ pub fn run() {
             apps::list_app_windows,
             apps::set_app_on_top,
             apps::pinned_app_count,
+            audio::audio_mixer,
+            audio::audio_peaks,
+            audio::set_volume,
             drag::start_drag,
             drag::end_drag,
             drag::stop_glide,
             focus::set_focus_mode,
+            media::now_playing,
+            media::media_control,
             morph::morph,
             pin::open_pin,
             pin::pin_file,
