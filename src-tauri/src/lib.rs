@@ -1,3 +1,4 @@
+mod apps;
 mod drag;
 #[cfg(windows)]
 mod drop;
@@ -19,7 +20,11 @@ pub fn run() {
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .manage(pin::Pins::default())
+        .manage(apps::PinnedApps::default())
         .invoke_handler(tauri::generate_handler![
+            apps::list_app_windows,
+            apps::set_app_on_top,
+            apps::pinned_app_count,
             drag::start_drag,
             drag::end_drag,
             drag::stop_glide,
@@ -47,6 +52,12 @@ pub fn run() {
 
             Ok(())
         })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|app, event| {
+            // Don't leave other apps' windows stuck on top after OzBox is gone.
+            if let tauri::RunEvent::Exit = event {
+                apps::unpin_all(app);
+            }
+        });
 }

@@ -20,14 +20,18 @@ export type PinInfo = { id: number; url: string; title: string };
 
 // Open pins live in Rust (they're windows); mirror them here and refresh on changes.
 let pins: PinInfo[] = [];
+let pinnedAppCount = 0;
 const listeners = new Set<() => void>();
 
 async function refresh() {
   try {
-    pins = await invoke<PinInfo[]>("list_pins");
+    [pins, pinnedAppCount] = await Promise.all([
+      invoke<PinInfo[]>("list_pins"),
+      invoke<number>("pinned_app_count"),
+    ]);
     listeners.forEach((listener) => listener());
   } catch (err) {
-    console.error("list_pins", err);
+    console.error("refresh pins", err);
   }
 }
 
@@ -44,6 +48,22 @@ function subscribe(listener: () => void) {
 export function usePins(): PinInfo[] {
   return useSyncExternalStore(subscribe, () => pins);
 }
+
+/** App windows OzBox is keeping on top. */
+export function usePinnedAppCount(): number {
+  return useSyncExternalStore(subscribe, () => pinnedAppCount);
+}
+
+/** Re-check, e.g. after a pinned app may have closed. */
+export const refreshPins = refresh;
+
+// ---- App windows ----
+
+export type AppWindow = { id: number; title: string; app: string; on_top: boolean };
+
+export const listAppWindows = () => invoke<AppWindow[]>("list_app_windows");
+export const setAppOnTop = (id: number, onTop: boolean) =>
+  invoke("set_app_on_top", { id, onTop });
 
 export const openPin = (url: string) => invoke<number>("open_pin", { url });
 export const pinFile = (path: string) => invoke<number>("pin_file", { path });

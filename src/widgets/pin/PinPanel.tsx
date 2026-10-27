@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { open as openFileDialog } from "@tauri-apps/plugin-dialog";
 import { FolderIcon } from "../../ui/icons";
+import { AppsList } from "./AppsList";
 import {
   addShortcut,
   closePin,
@@ -20,7 +21,31 @@ import {
   VIEWABLE_EXTENSIONS,
 } from "./pins";
 
+type Tab = "pages" | "apps";
+
 export function PinPanel() {
+  const [tab, setTab] = useState<Tab>("pages");
+  return (
+    <div className="pin-panel">
+      <div className="pin-panel__tabs" role="tablist">
+        {(["pages", "apps"] as const).map((t) => (
+          <button
+            key={t}
+            role="tab"
+            aria-selected={tab === t}
+            className={`pin-panel__tab${tab === t ? " is-active" : ""}`}
+            onClick={() => setTab(t)}
+          >
+            {t === "pages" ? "Pages & files" : "Apps"}
+          </button>
+        ))}
+      </div>
+      {tab === "pages" ? <PagesView /> : <AppsList />}
+    </div>
+  );
+}
+
+function PagesView() {
   const pins = usePins();
   const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
