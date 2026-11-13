@@ -1,7 +1,6 @@
-# Tauri + React + Typescript
+# Personal Desktop Workflow tool | OZBOX
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+Utilizing Tauri + React + Typescript, this tool floats above my entire workflow, giving me quick and easy access to note taking, timers/stopwatches, music/audio controls, *persistent windows*, and whiteboard/drawing overlays
 
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+# AI Disclosure: #
+This is a "vibe coded" project, used as a means to practice motion and product design skills in real tool application.
